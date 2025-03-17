@@ -171,27 +171,44 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     //use the pieces "legal move" function to determine if this move is legal, then complete it by
     //moving the new piece to it's new board location. 
     @Override
-    public void mouseReleased(MouseEvent e) { 
-        for(Square [] row: board) {
-        	for(Square s: row) {
-        		s.setBorder(null);
-     
-        	}
-        	
+    public void mouseReleased(MouseEvent e) {
+            if(currPiece!= null){
+            Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
+            boolean legal = false;
+            if (currPiece.getColor() == whiteTurn){
+            for (int i = 0; i < currPiece.getLegalMoves(this, fromMoveSquare).size();i++){
+                if(endSquare == currPiece.getLegalMoves(this, fromMoveSquare).get(i)){
+                    legal = true;
+                    break;
+                }
+            }
+            if (legal){
+                endSquare.removePiece();
+                fromMoveSquare.removePiece();
+                endSquare.put(currPiece);
+                whiteTurn = !whiteTurn;
+            }
+            else{
+                fromMoveSquare.put(currPiece);
+            }
+            
+    
         }
-        Square endSquare = getSquareArray()[e.getX()][e.getY()];
-        if (endSquare != null && currPiece.getLegalMoves(this, endSquare) != null){
-            endSquare.put(currPiece);
-            fromMoveSquare.put(null); // remove the piece from its old location
-        } else {
-            // Move is illegal, snap the piece back to its original square
-            fromMoveSquare.put(currPiece);
+        for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)) {
+            s.setBorder(null);
         }
-
-        // Deselect the piece after the move attempt
-        currPiece = null; 
-        repaint(); // Redraw the board to update visuals
-    }
+    
+        }
+        
+        
+    
+            //using currPiece
+            
+           
+            fromMoveSquare.setDisplay(true);
+            currPiece = null;
+            repaint();
+        }
 
     @Override
     public void mouseDragged(MouseEvent e) {

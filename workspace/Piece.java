@@ -49,37 +49,53 @@ public class Piece {
     // TO BE IMPLEMENTED!
     //return a list of every square that is "controlled" by this piece. A square is controlled
     //if the piece capture into it legally.
-    public ArrayList<Square> getControlledSquares(Board b, Square start) {
-      ArrayList<Square> controlledSquares = new ArrayList<>();
-    Square[][] squares = b.getSquareArray();
-    int startX = start.getX();
-    int startY = start.getY();
 
-    int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
-
-    for (int[] dir : directions) {
-        int x = startX;
-        int y = startY;
-
-        while (true) {
-            x += dir[0];
-            y += dir[1];
-
-            if (x < 0 || x >= squares.length || y < 0 || y >= squares[0].length) {
-                break; // makes sure piece cannot move off the board
-            }
-
-            Square nextSquare = squares[x][y];
-            controlledSquares.add(nextSquare);
-
-            if (nextSquare.isOccupied() == true) {
-                break; // stop at first piece
-            }
+    //takes square array of board and starting square of peice
+    //POST Returns an array list with the squares that can be captured by the spy
+    public ArrayList<Square> getControlledSquares(Square[][] board, Square start) {
+      ArrayList <Square> controlledArrayList = new ArrayList<Square>();
+      for (int col = start.getCol()+1; col<8;col++){
+        if(board[start.getRow()][col].isOccupied()){
+          controlledArrayList.add(board[start.getRow()][col]);
+          break;
+          
         }
-    }
-    return controlledSquares;
-
-    }
+        else{
+          controlledArrayList.add(board[start.getRow()][col]);
+        }
+      }
+      for (int colB = start.getCol()+1; colB>0;colB--){
+        if(board[start.getRow()][colB].isOccupied()){
+          controlledArrayList.add(board[start.getRow()][colB]);
+          break;
+        }
+        else{
+          controlledArrayList.add(board[start.getRow()][colB]);
+        }
+      }
+      for (int rowB = start.getCol()+1; rowB>0;rowB--){
+        if(board[rowB][start.getCol()].isOccupied()){
+          controlledArrayList.add(board[rowB][start.getCol()]);
+          break;
+    
+        }
+        else{
+          controlledArrayList.add(board[rowB][start.getCol()]);
+        }
+      }
+      for (int row = start.getRow()+1; row<8;row++){
+        if(board[row][start.getCol()].isOccupied()){
+          controlledArrayList.add(board[row][start.getCol()]);
+          break;
+        }
+        else{
+          controlledArrayList.add(board[row][start.getCol()]);
+        }
+      }
+      
+    return controlledArrayList;
+  }
+     
     
 
     //TO BE IMPLEMENTED!
@@ -89,19 +105,72 @@ public class Piece {
     //please note that your piece must have some sort of logic. Just being able to move to every square on the board is not
     //going to score any points.
 
-    //the "spy" is a piece that appears as a pawn, but can move like a rook.
+    //PRE:  takes the current board as an input as well the peices current square 
+    //POST: it retuns an array list that has every possible move for the spy
     public ArrayList<Square> getLegalMoves(Board b, Square start){
-      ArrayList<Square> moves = new ArrayList<>();
-        for(int i = 0; i < 8; i++){
-          for(int j = 0; j < 8; j++){
-            if(start.isOccupied() == false){
-              moves.add((b.getSquareArray()[start.getRow()][start.getCol()]));
+      // the spy is a piece that looks like a pawn, but moves like a rook, aiming to confuse the enemy.
+      
+     Square [][] board = b.getSquareArray();
+      ArrayList<Square> spaces  = new ArrayList<Square>();
+      //right
+        for (int col = start.getCol()+1; col<8;col++){
+          if(board[start.getRow()][col].isOccupied()){
+            if(board[start.getRow()][col].getOccupyingPiece().getColor() == color){
+                break;
             }
-
-
+            else{
+            spaces.add(board[start.getRow()][col]);
+            break;
+            }
+          }
+          else{
+            spaces.add(board[start.getRow()][col]);
           }
         }
+        //left
+        for (int colB = start.getCol()-1; colB>=0;colB--){
+          if(board[start.getRow()][colB].isOccupied()){
+            if(board[start.getRow()][colB].getOccupyingPiece().getColor() == color){
+              break;
+          }
+        
+            spaces.add(board[start.getRow()][colB]);
+            break;
       
-      return moves;
+          }
+          else{
+            spaces.add(board[start.getRow()][colB]);
+          }
+        }
+        //up
+        for (int rowB = start.getRow()-1; rowB>=0;rowB--){
+          if(board[rowB][start.getCol()].isOccupied()){
+            if(board[rowB][start.getCol()].getOccupyingPiece().getColor() == color){
+              break;
+          }
+        
+            spaces.add(board[rowB][start.getCol()]);
+            break;
+      
+          }
+          else{
+            spaces.add(board[rowB][start.getCol()]);
+          }
+        }
+        //down
+        for (int row = start.getRow()+1; row<8;row++){
+          if(board[row][start.getCol()].isOccupied()){
+            if(board[row][start.getCol()].getOccupyingPiece().getColor() == color){
+              break;
+          }
+            spaces.add(board[row][start.getCol()]);
+            break;
+          }
+          else{
+            spaces.add(board[row][start.getCol()]);
+          }
+        }
+        
+    	return spaces;
+    }
   }
-}
